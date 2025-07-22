@@ -74,7 +74,10 @@ public class PaymentHistoryActivity extends AppCompatActivity {
                     startActivity(new Intent(PaymentHistoryActivity.this, CartActivity.class));
                     overridePendingTransition(0, 0);
                 }
-
+                else if (i == R.id.home) {
+                    startActivity(new Intent(PaymentHistoryActivity.this, MainActivity.class));
+                    overridePendingTransition(0, 0);
+                }
 
             }
         });
