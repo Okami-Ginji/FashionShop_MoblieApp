@@ -8,7 +8,6 @@
     android:background="@color/lightGrey"
     tools:context=".Activity.MainActivity" >
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -18,8 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigation">
 
-
-    <LinearLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -69,10 +67,24 @@
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/cart_icon" />
 
+                <!-- Thêm nút Chat Support -->
+                <ImageView
+                    android:id="@+id/chatSupportBtn"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:padding="6dp"
+                    android:background="@drawable/circle_white"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_chat"
+                    android:contentDescription="Chat Support" />
+
                 <ImageView
                     android:id="@+id/imageView3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     app:srcCompat="@drawable/bell_icon" />
 
                 <ImageView
@@ -80,6 +92,7 @@
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginStart="8dp"
                     android:padding="6dp"
                     android:background="@drawable/circle_white"
                     android:scaleType="centerInside"
@@ -242,6 +255,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
