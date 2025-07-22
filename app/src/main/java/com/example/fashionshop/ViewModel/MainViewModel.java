@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.fashionshop.Domain.BannerModel;
 import com.example.fashionshop.Domain.CategoryModel;
+import com.example.fashionshop.Domain.ChatMessage;
+import com.example.fashionshop.Domain.ChatRoom;
 import com.example.fashionshop.Domain.ItemModel;
 import com.example.fashionshop.Domain.UserModel;
 import com.example.fashionshop.Repository.MainRepository;
@@ -33,6 +35,10 @@ public class MainViewModel extends ViewModel {
         return repository.checkEmailExists(email);
     }
 
+    public LiveData<String> getUserIdByEmail(String email) {
+        return repository.getUserIdByEmail(email);
+    }
+
     public LiveData<Boolean> registerUser(UserModel user) {
         return repository.registerUser(user);
     }
@@ -43,5 +49,34 @@ public class MainViewModel extends ViewModel {
 
     public LiveData<String> getRole(String userId) {
         return repository.getRole(userId);
+    }
+
+    // CHAT METHODS
+    public LiveData<String> getChatRoomIdByUserId(String userId) {
+        return repository.getChatRoomIdByUserId(userId);
+    }
+
+    public LiveData<String> createChatRoom(String userId, String userName) {
+        return repository.createChatRoom(userId, userName);
+    }
+
+    public LiveData<Boolean> sendMessage(String roomId, ChatMessage message) {
+        return repository.sendMessage(roomId, message);
+    }
+
+    public LiveData<ArrayList<ChatMessage>> getChatMessages(String roomId) {
+        return repository.getChatMessages(roomId);
+    }
+
+    public LiveData<ArrayList<ChatRoom>> getChatRoomsForAdmin() {
+        return repository.getChatRoomsForAdmin();
+    }
+
+    public LiveData<String> getUserChatRoom(String userId) {
+        return repository.getUserChatRoom(userId);
+    }
+
+    public void markMessagesAsRead(String roomId, String currentUserId) {
+        repository.markMessagesAsRead(roomId, currentUserId);
     }
 }

@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class AdminActivity extends AppCompatActivity {
 
-    Button btnCreateProduct, btnListProducts;
+    Button btnCreateProduct, btnListProducts, btnChatManagement;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +26,7 @@ public class AdminActivity extends AppCompatActivity {
 
         btnCreateProduct = findViewById(R.id.btnCreateProduct);
         btnListProducts = findViewById(R.id.btnListProducts);
+        btnChatManagement = findViewById(R.id.btnChatManagement);
 
         btnCreateProduct.setOnClickListener(v -> {
             Intent intent = new Intent(AdminActivity.this, AddProductActivity.class);
@@ -34,6 +35,11 @@ public class AdminActivity extends AppCompatActivity {
 
         btnListProducts.setOnClickListener(v -> {
             Intent intent = new Intent(AdminActivity.this, ProductListAdminActivity.class);
+            startActivity(intent);
+        });
+
+        btnChatManagement.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminActivity.this, ChatListActivity.class);
             startActivity(intent);
         });
     }

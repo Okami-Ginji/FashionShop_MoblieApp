@@ -48,7 +48,7 @@ dependencies {
 
 
     implementation(fileTree(mapOf(
-        "dir" to "D:\\PRM392\\FashionShop_FP\\FashionShopAndroid\\ZaloPayLib",
+        "dir" to "D:\\FPT_UNIVERSITY\\8_Summer25\\PRM392\\FashionShop_MoblieApp\\ZaloPayLib",
         "include" to listOf("*.aar", "*.jar")
     )))
 

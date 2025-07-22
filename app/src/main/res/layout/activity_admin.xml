@@ -33,7 +33,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Danh sách sản phẩm"
+        android:layout_marginBottom="20dp"
         android:backgroundTint="#2196F3"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnChatManagement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quản lý Chat"
+        android:backgroundTint="#FF9800"
         android:textColor="#FFFFFF"
         android:textStyle="bold" />
 

@@ -72,6 +72,12 @@
         <activity
             android:name=".Activity.PaymentNotification"
             android:exported="true" />
+        <activity
+            android:name=".Activity.ChatActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.ChatListActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

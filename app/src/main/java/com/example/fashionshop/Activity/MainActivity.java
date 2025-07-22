@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         viewModel = new MainViewModel();
         prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         binding.logout.setOnClickListener(v -> handleLogout());
+        binding.chatSupportBtn.setOnClickListener(v -> openChatSupport());
         initCategory();
         initSlider();
         initPopular();
@@ -76,6 +78,26 @@ public class MainActivity extends AppCompatActivity {
         binding.cartBtn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this,CartActivity.class)));
     }
 
+    // Thêm method để mở chat support
+    private void openChatSupport() {
+        String userId = prefs.getString("userId", null);
+        if (userId == null) {
+            Toast.makeText(this, "Vui lòng đăng nhập để sử dụng chat", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Kiểm tra role của user
+        viewModel.getRole(userId).observe(this, role -> {
+            if ("admin".equals(role)) {
+                // Admin -> mở danh sách chat rooms
+                startActivity(new Intent(MainActivity.this, ChatListActivity.class));
+            } else {
+                // User -> mở chat với admin
+                Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
 
     private void initPopular() {
         binding.progressBarPopular.setVisibility(View.VISIBLE);
