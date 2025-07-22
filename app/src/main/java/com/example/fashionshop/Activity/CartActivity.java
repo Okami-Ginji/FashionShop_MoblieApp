@@ -3,6 +3,8 @@ package com.example.fashionshop.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -14,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.fashionshop.Adapter.CartAdapter;
+import com.example.fashionshop.Api.CreateOrder;
 import com.example.fashionshop.Domain.CheckoutRecord;
 import com.example.fashionshop.Helper.ChangeNumberItemsListener;
 import com.example.fashionshop.Helper.ManagmentCart;
@@ -23,11 +26,19 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
+import org.json.JSONObject;
+
 import java.lang.reflect.Type;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+
+import vn.zalopay.sdk.Environment;
+import vn.zalopay.sdk.ZaloPayError;
+import vn.zalopay.sdk.ZaloPaySDK;
+import vn.zalopay.sdk.listeners.PayOrderListener;
 
 public class CartActivity extends AppCompatActivity {
     private ActivityCartBinding binding;
@@ -42,10 +53,22 @@ public class CartActivity extends AppCompatActivity {
         binding = ActivityCartBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
+
+        StrictMode.ThreadPolicy policy = new
+                StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        // ZaloPay SDK Init
+        ZaloPaySDK.init(2553, Environment.SANDBOX);
+
         managmentCart= new ManagmentCart(this);
         calculatorCart();
         setVariable();
         initCartList();
+
+        binding.backBtn.setOnClickListener(v->finish());
+        bottomNavigation();
     }
 
     private void initCartList() {
@@ -63,7 +86,78 @@ public class CartActivity extends AppCompatActivity {
 
     private void setVariable() {
         binding.checkoutBtn.setOnClickListener(v -> {
-            saveCheckoutToHistoryJson();
+            CreateOrder orderApi = new CreateOrder();
+            try {
+                double delivery = 10;
+                double total = (Math.round((managmentCart.getTotalFee() + tax + delivery) * 100.0) / 100.0 ) * 26145.00;
+                String totalString = String.format("%.0f", total);
+
+
+                JSONObject data = orderApi.createOrder(totalString);
+                String code = data.getString("return_code");
+                if (code.equals("1")) {
+                    String token = data.getString("zp_trans_token");
+                    ZaloPaySDK.getInstance().payOrder(CartActivity.this, token, "demozpdk://app", new PayOrderListener() {
+                        @Override
+                        public void onPaymentSucceeded(String s, String s1, String s2) {
+
+                            saveCheckoutToHistoryJson();
+                            Intent intent1 = new Intent(CartActivity.this, PaymentNotification.class);
+                            intent1.putExtra("result", "Thanh toán thành công");
+                            startActivity(intent1);
+                        }
+
+                        @Override
+                        public void onPaymentCanceled(String s, String s1) {
+                            Intent intent1 = new Intent(CartActivity.this, PaymentNotification.class);
+                            intent1.putExtra("result", "Hủy thanh toán");
+                            startActivity(intent1);
+                        }
+
+                        @Override
+                        public void onPaymentError(ZaloPayError zaloPayError, String s, String s1) {
+                            Intent intent1 = new Intent(CartActivity.this, PaymentNotification.class);
+                            intent1.putExtra("result", "Lỗi thanh toán");
+                            startActivity(intent1);
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Đảm bảo luôn set đúng tab khi quay lại màn hình
+        binding.bottomNavigation.setItemSelected(R.id.cart, true); // false để không gọi listener
+    }
+
+
+    private void bottomNavigation() {
+        binding.bottomNavigation.setItemSelected(R.id.cart, true);
+
+        binding.bottomNavigation.setOnItemSelectedListener(new ChipNavigationBar.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(int i) {
+                if (i == R.id.home) {
+                    startActivity(new Intent(CartActivity.this, MainActivity.class));
+                    overridePendingTransition(0, 0);
+                    // Đang ở MainActivity nên không cần làm gì
+                } else if (i == R.id.product) {
+                    startActivity(new Intent(CartActivity.this, ProductListActitivy.class));
+                    overridePendingTransition(0, 0);
+                }else if(i == R.id.cart){
+
+                }
+                else if(i == R.id.profile){
+                    startActivity(new Intent(CartActivity.this, PaymentHistoryActivity.class));
+                    overridePendingTransition(0, 0);
+                }
+
+            }
         });
 
     }
@@ -95,7 +189,7 @@ public class CartActivity extends AppCompatActivity {
         // Tạo bản ghi mới
         CheckoutRecord record = new CheckoutRecord();
 
-        // ✅ Sử dụng SimpleDateFormat thay vì LocalDate.now()
+
         String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         record.setDate(currentDate);
 
@@ -110,7 +204,7 @@ public class CartActivity extends AppCompatActivity {
         editor.putString("history_json", newJson);
         editor.apply();
 
-        Toast.makeText(this, "Đã lưu lịch sử thanh toán!", Toast.LENGTH_SHORT).show();
+
     }
     private void clearPaymentHistory() {
         SharedPreferences sharedPreferences = getSharedPreferences("PaymentHistory", MODE_PRIVATE);
@@ -122,5 +216,9 @@ public class CartActivity extends AppCompatActivity {
 
 
 
-
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        ZaloPaySDK.getInstance().onResult(intent);
+    }
 }

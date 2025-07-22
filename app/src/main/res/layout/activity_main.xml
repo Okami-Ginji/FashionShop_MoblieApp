@@ -8,11 +8,18 @@
     android:background="@color/lightGrey"
     tools:context=".Activity.MainActivity" >
 
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_marginBottom="0dp"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigation">
 
-        <LinearLayout
+
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -219,20 +226,22 @@
     </ScrollView>
 
     <com.ismaeldivita.chipnavigation.ChipNavigationBar
-        android:layout_width="match_parent"
         android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
         android:layout_height="70dp"
         android:background="@color/white"
         android:padding="4dp"
+        android:fitsSystemWindows="true"
         app:cnb_menuResource="@menu/bottom_menu"
         app:cnb_orientationMode="horizontal"
         app:cnb_radius="50dp"
+        android:layout_marginBottom="47dp"
         app:cnb_unselectedColor="@color/black"
         app:cnb_iconColor="@color/white"
         app:cnb_iconSize="20dp"
-
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
