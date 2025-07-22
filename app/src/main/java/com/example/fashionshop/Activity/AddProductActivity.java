@@ -19,13 +19,17 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.fashionshop.Domain.CategoryModel;
 import com.example.fashionshop.Domain.ItemModel;
 import com.example.fashionshop.R;
+import com.example.fashionshop.ViewModel.MainViewModel;
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -33,6 +37,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class AddProductActivity extends AppCompatActivity {
@@ -41,10 +46,15 @@ public class AddProductActivity extends AppCompatActivity {
     private Uri imageUri;
     private ImageView imgPreview;
     private Cloudinary cloudinary;
+    private Integer selectedCategoryId = null;
+    private String selectedCategoryTitle = null;
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
         setContentView(R.layout.activity_add_product);
         FlexboxLayout layoutColors = findViewById(R.id.layoutColors);
         EditText edtTitle = findViewById(R.id.edtTitle);
@@ -55,6 +65,16 @@ public class AddProductActivity extends AppCompatActivity {
         imgPreview = findViewById(R.id.imgPreview);
         Button btnSelectImage = findViewById(R.id.btnSelectImage);
         Button btnUpload = findViewById(R.id.btnCreateProduct);
+
+        initCategoryDropdown();
+
+
+
+
+
+
+
+
 
         cloudinary = new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", "dxmglydea",
@@ -130,6 +150,7 @@ public class AddProductActivity extends AppCompatActivity {
                     item.setId(null);
                     item.setTitle(edtTitle.getText().toString().trim());
                     item.setDescription(edtDescription.getText().toString().trim());
+                    item.setCategoryId(selectedCategoryId);
 
                     // Lấy old price
                     String oldPriceStr = edtOldPrice.getText().toString().trim();
@@ -179,11 +200,18 @@ public class AddProductActivity extends AppCompatActivity {
                     item.setPicUrl(new ArrayList<>(Collections.singletonList(url)));
 
                     addItemToFirebase(item);
+
+                    Intent intent = new Intent(AddProductActivity.this, ProductListAdminActivity.class);
+                    startActivity(intent);
                 });
             } else {
                 Toast.makeText(this, "Vui lòng chọn ảnh!", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        ImageView backBtn = findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(v->finish());
     }
 
 
@@ -227,5 +255,38 @@ public class AddProductActivity extends AppCompatActivity {
 
     interface Callback<T> {
         void onSuccess(T result);
+    }
+
+    private void initCategoryDropdown() {
+
+        TextView txtCategory = findViewById(R.id.txtCategory);
+        viewModel.loadCategory().observe(this, categoryList -> {
+            if (categoryList == null || categoryList.isEmpty()) return;
+
+
+            String[] titles = new String[categoryList.size() - 1];
+            Map<String, Integer> titleToIdMap = new HashMap<>();
+
+            int j = 0;
+            for (int i = 1; i < categoryList.size(); i++) {
+                CategoryModel item = categoryList.get(i);
+                titles[j] = item.getTitle();
+                titleToIdMap.put(item.getTitle(), item.getId());
+                j++;
+            }
+
+
+            txtCategory.setOnClickListener(v -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Category");
+                builder.setItems(titles, (dialog, which) -> {
+                    String selectedTitle = titles[which];
+                    txtCategory.setText(selectedTitle);
+                    selectedCategoryId = titleToIdMap.get(selectedTitle);
+                });
+                builder.setNegativeButton("Cancel", null);
+                builder.show();
+            });
+        });
     }
 }

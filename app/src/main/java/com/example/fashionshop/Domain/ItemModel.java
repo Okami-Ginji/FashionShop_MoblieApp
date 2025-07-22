@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class ItemModel implements Serializable {
     private String id;
     private  String title;
+    private  long categoryId;
     private String description;
     private  String offPercent;
     private ArrayList<String> size;
@@ -16,6 +17,14 @@ public class ItemModel implements Serializable {
     private int review;
     private double rating;
     private int NumberinCart;
+
+    public long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(long categoryId) {
+        this.categoryId = categoryId;
+    }
 
     public ItemModel() {
     }
