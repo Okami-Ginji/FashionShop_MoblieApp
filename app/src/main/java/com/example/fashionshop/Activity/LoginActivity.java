@@ -59,9 +59,11 @@ public class LoginActivity extends AppCompatActivity {
 
         viewModel.login(email, password).observe(this, user -> {
             if (user != null) {
+                String role = user.getRole();
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putBoolean("isLoggedIn", true);
                 editor.putString("userId", user.getId());
+                editor.putString("role",role);
                 if (cbRemember.isChecked()) {
                     editor.putBoolean("remember", true);
                     editor.putString("savedUsername", email);
@@ -74,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
                 editor.apply();
-                String role = user.getRole(); // <- giả sử user có hàm getRole()
+                 // <- giả sử user có hàm getRole()
 
                 if ("admin".equalsIgnoreCase(role)) {
                     startActivity(new Intent(this, AdminActivity.class));

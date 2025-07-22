@@ -2,6 +2,7 @@ package com.example.fashionshop.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,6 +41,9 @@ public class ProductListAdminActivity extends AppCompatActivity {
         rvProductList.setAdapter(adapter);
 
         loadProductsFromFirebase();
+
+        ImageView backBtn = findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(v->finish());
 
     }
 

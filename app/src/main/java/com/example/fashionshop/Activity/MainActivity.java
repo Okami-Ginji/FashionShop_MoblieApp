@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private MainViewModel viewModel;
     private SharedPreferences prefs;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

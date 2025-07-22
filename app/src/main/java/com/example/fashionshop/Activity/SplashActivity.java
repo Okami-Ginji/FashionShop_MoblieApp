@@ -17,9 +17,15 @@ public class SplashActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
+        String role = prefs.getString("role", null);
 
         if (isLoggedIn) {
-            startActivity(new Intent(this, MainActivity.class));
+            if("admin".equalsIgnoreCase(role)){
+                startActivity(new Intent(this, AdminActivity.class));
+            }
+            else {
+                startActivity(new Intent(this, MainActivity.class));
+            }
             finish();
             return;
         }
