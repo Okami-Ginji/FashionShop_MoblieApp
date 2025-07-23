@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -25,6 +26,13 @@ import com.example.fashionshop.Domain.BannerModel;
 import com.example.fashionshop.R;
 import com.example.fashionshop.ViewModel.MainViewModel;
 import com.example.fashionshop.databinding.ActivityMainBinding;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
 import java.util.ArrayList;
@@ -45,11 +53,16 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         binding.logout.setOnClickListener(v -> handleLogout());
         binding.chatSupportBtn.setOnClickListener(v -> openChatSupport());
+        binding.fabMap.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, MapActivity.class);
+            startActivity(intent);
+        });
         initCategory();
         initSlider();
         initPopular();
         bottomNavigation();
         loadUserInfo();
+
     }
 
     private void bottomNavigation() {
@@ -182,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
 
